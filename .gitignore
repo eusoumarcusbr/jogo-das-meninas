@@ -1,0 +1,16 @@
+# Segredo e senha do ranking. Preenchido à mão em cada lugar onde o jogo roda.
+# Em repositório público não tem volta: mesmo apagando, fica no histórico.
+api/config.php
+
+# Dados do ranking gravados em produção.
+api/dados/*.json
+api/dados/*.json.php
+
+# Trabalho local
+_referencia/
+_conferencia.png
+*.tgz
+
+# macOS
+.DS_Store
+._*

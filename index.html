@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Jogo das Meninas</title>
+<meta name="description" content="Corra com a Sig, a Queijadinha, a Furrundu, a Lessa, o Luck, a Nina ou a Amora. Pegue petisco e desvie do aspirador.">
+<meta name="theme-color" content="#E8341C">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Jogo das Meninas">
+<meta property="og:title" content="Jogo das Meninas">
+<meta property="og:description" content="Escolha sua menina, corra e pegue o máximo de petisco que conseguir.">
+<meta property="og:url" content="https://www.eusoumarcus.com.br/jogo-das-meninas/">
+<meta property="og:image" content="https://www.eusoumarcus.com.br/jogo-das-meninas/assets/img/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Jogo das Meninas">
+<meta name="twitter:description" content="Escolha sua menina, corra e pegue o máximo de petisco que conseguir.">
+<meta name="twitter:image" content="https://www.eusoumarcus.com.br/jogo-das-meninas/assets/img/og.png">
+
+<link rel="canonical" href="https://www.eusoumarcus.com.br/jogo-das-meninas/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23E8341C'/%3E%3Ccircle cx='11' cy='13' r='3' fill='%23fff'/%3E%3Ccircle cx='21' cy='13' r='3' fill='%23fff'/%3E%3Cpath d='M9 21c2 3 12 3 14 0' stroke='%23fff' stroke-width='3' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Plus+Jakarta+Sans:wght@400;600;800&display=swap">
+
+<!-- O ?v= força o navegador a baixar o arquivo novo mesmo com cache antigo.
+     SEMPRE que mexer no CSS ou em algum JS, suba o número em TODAS as linhas. -->
+<link rel="stylesheet" href="css/estilo.css?v=1">
+</head>
+<body>
+
+<main class="wrap">
+
+  <header class="topo">
+    <h1 class="titulo">Jogo das <span>Meninas</span></h1>
+    <p class="sub">Escolha sua menina, corra atrás do petisco e desvie do que estiver no caminho.</p>
+  </header>
+
+  <section class="elenco" aria-label="Escolha da personagem">
+    <span class="elenco-lab">Quem vai correr</span>
+    <div class="elenco-lista" id="elenco" role="group"></div>
+  </section>
+
+  <section class="palco" id="palco">
+    <canvas id="jogo" width="900" height="280" aria-label="Área do jogo"></canvas>
+
+    <div class="hud">
+      <div class="hud-item hud-xp esconde" id="hud-xp">
+        <span class="hud-lab">Dobro</span>
+        <strong class="hud-val" id="hud-xp-tempo">15s</strong>
+      </div>
+      <div class="hud-item">
+        <span class="hud-lab">Petiscos</span>
+        <strong class="hud-val" id="hud-provas">0</strong>
+      </div>
+      <div class="hud-item">
+        <span class="hud-lab">Recorde</span>
+        <strong class="hud-val hud-rec" id="hud-recorde">0</strong>
+      </div>
+    </div>
+
+    <button class="btn-som" id="btn-som" type="button" aria-label="Ligar ou desligar o som">SOM: ON</button>
+
+    <div class="tela" id="tela-inicio">
+      <p class="tela-tit">Bora correr?</p>
+      <p class="tela-txt">
+        <span class="so-teclado">Espaço ou seta para cima pula. Seta para baixo cai mais rápido.</span>
+        <span class="so-toque">Toque na tela para pular.</span>
+      </p>
+      <button class="botao" id="btn-comecar" type="button">Começar</button>
+    </div>
+
+    <div class="tela tela-fim tela-off" id="tela-fim">
+      <p class="so-leitor" id="fim-txt" role="status" aria-live="polite"></p>
+      <button class="botao" id="btn-denovo" type="button">Jogar de novo</button>
+    </div>
+  </section>
+
+  <div class="controles" id="controles">
+    <button class="ctrl" id="ctrl-pular" type="button">Pular</button>
+  </div>
+
+  <section class="nivel" aria-label="Nível de dificuldade">
+    <span class="nivel-lab">Dificuldade</span>
+    <div class="nivel-opcoes" role="group">
+      <button class="niv" data-nivel="facil"   type="button">Fácil</button>
+      <button class="niv" data-nivel="normal"  type="button">Normal</button>
+      <button class="niv" data-nivel="dificil" type="button">Difícil</button>
+    </div>
+    <p class="nivel-obs" id="nivel-obs"></p>
+  </section>
+
+  <section class="share" id="share">
+    <h2 class="share-tit">Mostre quanto petisco você pegou</h2>
+    <div class="share-linha">
+      <button class="sh sh-nativo esconde" id="sh-nativo" type="button">Compartilhar</button>
+      <button class="sh sh-whats"  id="sh-whats"  type="button">WhatsApp</button>
+      <button class="sh sh-insta"  id="sh-insta"  type="button">Instagram Stories</button>
+      <button class="sh sh-face"   id="sh-face"   type="button">Facebook</button>
+      <button class="sh sh-link"   id="sh-link"   type="button">Copiar link</button>
+      <button class="sh sh-link"   id="sh-baixar" type="button">Baixar imagem</button>
+    </div>
+    <p class="share-status" id="share-status" role="status" aria-live="polite"></p>
+  </section>
+
+  <section class="ranking" id="ranking">
+    <h2 class="share-tit">Ranking &mdash; <span id="rk-nivel-nome">Normal</span></h2>
+
+    <form class="rk-form esconde" id="rk-form">
+      <label class="rk-lab" for="rk-apelido">Como quer aparecer na lista?</label>
+      <div class="rk-linha">
+        <input class="rk-campo" id="rk-apelido" type="text" maxlength="12"
+               autocomplete="off" spellcheck="false" placeholder="seu apelido">
+        <button class="botao rk-enviar" id="rk-enviar" type="submit">Entrar no ranking</button>
+      </div>
+      <p class="rk-nota">S&oacute; um apelido, at&eacute; 12 letras. A lista &eacute; p&uacute;blica e o apelido
+        passa por confer&ecirc;ncia antes de aparecer.</p>
+    </form>
+
+    <p class="rk-status" id="rk-status" role="status" aria-live="polite"></p>
+
+    <div class="rk-cab esconde" id="rk-cab" aria-hidden="true">
+      <span></span><span>Apelido</span><span>Petiscos</span><span>Dist&acirc;ncia</span>
+    </div>
+    <ol class="rk-lista esconde" id="rk-lista"></ol>
+    <p class="rk-vazio" id="rk-vazio">Ningu&eacute;m no ranking ainda. Seja o primeiro.</p>
+  </section>
+
+  <section class="legenda">
+    <div class="leg-col">
+      <h2 class="leg-tit">O que pegar</h2>
+      <ul class="leg-lista">
+        <li><i class="ic ic-petisco"></i><span><b>Petisco</b> &mdash; vale 1</span></li>
+        <li><i class="ic ic-sache"></i><span><b>Sach&ecirc;</b> &mdash; vale 5</span></li>
+      </ul>
+    </div>
+    <div class="leg-col">
+      <h2 class="leg-tit">O que desviar</h2>
+      <ul class="leg-lista">
+        <li><i class="ic ic-aspirador"></i><span><b>Aspirador</b> &mdash; pule</span></li>
+        <li><i class="ic ic-caixa"></i><span><b>Caixa</b> &mdash; pule</span></li>
+      </ul>
+    </div>
+    <div class="leg-col leg-atalhos">
+      <h2 class="leg-tit">Atalhos</h2>
+      <ul class="leg-lista leg-teclas">
+        <li><kbd>Espa&ccedil;o</kbd> <kbd>&uarr;</kbd> pular</li>
+        <li><kbd>&darr;</kbd> cair r&aacute;pido</li>
+        <li><kbd>P</kbd> pausar &nbsp; <kbd>M</kbd> som</li>
+      </ul>
+    </div>
+  </section>
+
+  <footer class="rodape">
+    <p>Sig, Queijadinha, Furrundu, Lessa, Luck, Nina e Amora existem de verdade e dormem muito.</p>
+    <p class="rodape-cred"><a href="https://www.eusoumarcus.com.br/">eusoumarcus.com.br</a></p>
+  </footer>
+
+</main>
+
+<script src="js/audio.js?v=1"></script>
+<script src="js/sprites.js?v=1"></script>
+<script src="js/compartilhar.js?v=1"></script>
+<script src="js/ranking.js?v=1"></script>
+<script src="js/jogo.js?v=1"></script>
+</body>
+</html>
