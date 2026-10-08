@@ -34,7 +34,7 @@ window.Ranking = (function () {
 
   var token       = null;   /* comprovante da partida em curso */
   var nivelAtual  = 'normal';
-  var pendente    = null;   /* {provas, metros, nivel} esperando o apelido */
+  var pendente    = null;   /* {petiscos, metros, nivel} esperando o apelido */
   var enviando    = false;
   var disponivel  = true;   /* vira false no primeiro sinal de que não há API */
 
@@ -93,7 +93,7 @@ window.Ranking = (function () {
         li.className = 'rk-item';
         li.appendChild(span('rk-pos', e.pos + 'º'));
         li.appendChild(span('rk-nome', e.apelido));
-        li.appendChild(span('rk-pts', formatar(e.provas)));
+        li.appendChild(span('rk-pts', formatar(e.petiscos)));
         li.appendChild(span('rk-m', formatar(e.metros) + ' m'));
         lista.appendChild(li);
       }
@@ -156,17 +156,17 @@ window.Ranking = (function () {
   }
 
   /* Chamado quando a partida termina. */
-  function oferecer(provas, metros, nivel) {
+  function oferecer(petiscos, metros, nivel) {
     if (!disponivel) return;
     calar();
 
-    if (!provas || !token) {          /* zero prova não entra em ranking */
+    if (!petiscos || !token) {          /* zero petisco não entra em ranking */
       form.classList.add('esconde');
       pendente = null;
       return;
     }
 
-    pendente = { provas: provas, metros: metros, nivel: nivel };
+    pendente = { petiscos: petiscos, metros: metros, nivel: nivel };
     form.classList.remove('esconde');
     secao.classList.add('destaque');
     botao.disabled = false;
@@ -188,7 +188,7 @@ window.Ranking = (function () {
     pedir('POST', API, {
       token:   token,
       apelido: apelido,
-      provas:  pendente.provas,
+      petiscos:  pendente.petiscos,
       metros:  pendente.metros,
       nivel:   pendente.nivel
     }, function (erro, dado) {
